@@ -1,11 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-/**
- * Use inside Server Components, Route Handlers, and Server Actions.
- * Reads/writes the auth session via cookies, so the session set by
- * middleware.ts is visible here automatically.
- */
 export async function createClient() {
   const cookieStore = await cookies();
 
@@ -17,7 +12,9 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(
+          cookiesToSet: { name: string; value: string; options: CookieOptions }[]
+        ) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
