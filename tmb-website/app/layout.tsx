@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Poppins, Inter } from "next/font/google";
-import { Nav } from "@/components/nav";
+import { NavServer } from "@/components/nav-server";
 import { Footer } from "@/components/footer";
 import "./globals.css";
 
@@ -84,7 +84,7 @@ export default function RootLayout({
         >
           Skip to content
         </a>
-        <Nav />
+        <NavServer />
         <main id="main-content">{children}</main>
         <Footer />
       </body>

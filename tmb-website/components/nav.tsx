@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -14,7 +14,7 @@ const links = [
   { href: "/blog", label: "Blog" },
 ];
 
-export function Nav() {
+export function Nav({ isAuthed = false }: { isAuthed?: boolean }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -53,7 +53,22 @@ export function Nav() {
           ))}
         </ul>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-4 lg:flex">
+          {isAuthed ? (
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 text-sm font-semibold text-slate-ink hover:text-emerald"
+            >
+              <LayoutDashboard size={16} /> Dashboard
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-slate-ink hover:text-emerald"
+            >
+              Log In
+            </Link>
+          )}
           <Link href="/pricing" className="btn-primary">
             Get the Book
           </Link>
@@ -83,6 +98,15 @@ export function Nav() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href={isAuthed ? "/dashboard" : "/login"}
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-3 py-3 text-sm font-medium text-slate-ink hover:bg-surface-soft"
+              >
+                {isAuthed ? "Dashboard" : "Log In"}
+              </Link>
+            </li>
             <li className="pt-2">
               <Link href="/pricing" className="btn-primary w-full" onClick={() => setOpen(false)}>
                 Get the Book

@@ -1,40 +1,56 @@
 # Phase 2 Roadmap
 
-Phase 1 (this repo, as delivered) is the complete marketing site — no
-backend required. This document specifies what Phase 2 involves, so
-whoever picks it up (you, a developer, or Claude Code with network access)
-has a concrete plan rather than a blank page.
+Phase 1 (the marketing site) is complete. **Auth and the read/write dashboard
+are now built too** — see the status below. What's left is AI Coach and
+payments.
 
-## 1. Prerequisites
+## 1. Prerequisites — the one manual step left
 
-- A Supabase project (free tier is enough to start)
-- `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in `.env.local`
+- Create a Supabase project (free tier is enough) at supabase.com
+- Copy `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` from
+  Project Settings → API into `.env.local` (for local dev) and into your
+  Vercel project's Environment Variables (for production)
 - Run `docs/database-schema.sql` in the Supabase SQL editor
 
-## 2. Auth
+**Nothing else in this codebase will work until this step is done** — the
+auth pages, middleware, and dashboard are all written correctly but will
+error out without real Supabase credentials behind them.
 
-- Supabase Auth, email/password + magic link to start
-- Install `@supabase/ssr` (already in `package.json`)
-- Add `middleware.ts` that checks session for any `/dashboard/*` route and
-  redirects to `/login` if absent
-- `/login` and `/signup` pages: simple forms using the same
-  react-hook-form + zod pattern already used in `components/contact-form.tsx`
+## 2. Auth — ✅ Built
 
-## 3. Dashboard
+- `lib/supabase/client.ts` / `lib/supabase/server.ts` — browser and server
+  Supabase clients using `@supabase/ssr`
+- `middleware.ts` — refreshes the session on every request, redirects
+  unauthenticated visitors away from `/dashboard/*` to `/login`
+- `app/login/page.tsx`, `app/signup/page.tsx` — password + magic-link auth
+- `app/auth/callback/route.ts` — handles magic-link/email-confirm redirects
+- `app/auth/signout/route.ts` — sign-out handler
+- `components/nav-server.tsx` — Server Component that checks session and
+  passes it into the (client) Nav, so "Log In" vs. "Dashboard" shows
+  correctly with no client-side flash
 
-Replace `app/dashboard/page.tsx` (currently a stub) with a Server Component
-that:
-1. Reads the session server-side
-2. Queries `reading_progress`, `bookmarks`, and `downloads_log` for the
-   current user
-3. Renders progress against `lib/book-data.ts`'s 49 chapters (already the
-   single source of truth, so nothing needs to be duplicated)
+## 3. Dashboard — ✅ Built (read + write)
 
-Mutations (marking a chapter read, adding a bookmark) should go through
-Route Handlers (`app/api/.../route.ts`), not direct client-side Supabase
-writes — keeps RLS and validation centralized in one place.
+`app/dashboard/page.tsx` is a real Server Component: checks the session,
+queries `reading_progress` and `bookmarks` for the current user, and
+renders progress bars per part against `lib/book-data.ts` — the same
+source of truth the public Table of Contents page uses, so nothing can
+drift out of sync between them.
 
-## 4. AI Coach
+Mutations go through Route Handlers, not direct client-side writes:
+- `app/api/progress/route.ts` — POST to mark a chapter read, DELETE to unmark
+- `app/api/bookmarks/route.ts` — POST to add a bookmark, DELETE to remove
+
+Both validate input with `zod` and check `auth.getUser()` before touching
+the database — RLS in `database-schema.sql` is the second layer of defense,
+not the only one.
+
+**Not yet built**: UI buttons that actually call these two routes from
+inside the reading experience (e.g., a "Mark chapter read" button on a
+chapter page). The routes work; nothing currently calls them. That's the
+natural next increment.
+
+## 4. AI Coach — Not yet built
 
 Explicitly **not** general-purpose ChatGPT — scoped to this book only.
 
@@ -49,20 +65,19 @@ Recommended approach: retrieval-augmented generation, not fine-tuning.
 4. Store conversation + message history in `coach_conversations` /
    `coach_messages` (already in the schema)
 
-This keeps answers grounded in the actual book rather than general
-knowledge, which is the whole point of it not being ChatGPT.
-
-## 5. Payments / Memberships
+## 5. Payments / Memberships — Not yet built
 
 Stripe is the natural fit given Vercel + Supabase. A `subscriptions` table
 (user_id, stripe_customer_id, status, tier) gates access to
 `/dashboard/coach` and future course content via a simple RLS policy
 checking `status = 'active'`.
 
-## 6. Suggested Build Order
+## 6. Suggested Build Order (updated)
 
-1. Auth (login/signup, middleware, session-aware Nav state)
-2. Dashboard read-only view (progress, bookmarks) — no writes yet
-3. Route Handlers for progress/bookmark mutations
+1. ~~Auth (login/signup, middleware, session-aware Nav state)~~ ✅ Done
+2. ~~Dashboard read/write (progress, bookmarks)~~ ✅ Done
+3. Wire "mark as read" / "bookmark" buttons into an actual chapter-reading
+   UI (the routes exist; nothing calls them yet)
 4. Stripe + subscriptions table
 5. AI Coach (RAG pipeline)
+
