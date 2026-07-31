@@ -40,9 +40,16 @@ export function LoginForm() {
     const supabase = createClient();
 
     if (mode === "magic-link") {
+      // shouldCreateUser: false — magic link on the LOGIN page only signs
+      // in existing accounts. Without this, it would silently create new
+      // accounts too, completely bypassing the disposable-email and
+      // password checks enforced on /signup.
       const { error } = await supabase.auth.signInWithOtp({
         email: values.email,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          shouldCreateUser: false,
+        },
       });
       if (error) setServerError(error.message);
       else setMagicLinkSent(true);

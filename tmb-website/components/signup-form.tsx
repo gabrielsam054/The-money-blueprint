@@ -6,12 +6,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { isDisposableEmail } from "@/lib/disposable-email-domains";
 
 const schema = z.object({
   fullName: z.string().min(2, "Enter your name"),
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z
+    .string()
+    .email("Enter a valid email address")
+    .refine((email: string) => !isDisposableEmail(email), {
+      message: "Temporary/disposable email addresses aren't allowed — please use a real email.",
+    }),
+  password: z
+    .string()
+    .min(8, "At least 8 characters")
+    .regex(/[a-z]/, "Needs a lowercase letter")
+    .regex(/[A-Z]/, "Needs an uppercase letter")
+    .regex(/[0-9]/, "Needs a number"),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -26,17 +36,17 @@ export function SignupForm() {
 
   async function onSubmit(values: FormValues) {
     setServerError(null);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
-      email: values.email,
-      password: values.password,
-      options: {
-        data: { full_name: values.fullName },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
+    // Posts to a server route rather than calling Supabase directly from
+    // the browser — the disposable-email and password-strength checks are
+    // enforced there, server-side, where they can't be bypassed.
+    const res = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
     });
-    if (error) {
-      setServerError(error.message);
+    const json = await res.json();
+    if (!res.ok) {
+      setServerError(json.error ?? "Something went wrong. Please try again.");
       return;
     }
     setSubmitted(true);
@@ -98,6 +108,9 @@ export function SignupForm() {
             {...register("password")}
             className="mt-1.5 w-full rounded-lg border border-surface-line px-4 py-3 text-sm focus:border-emerald focus:outline-none"
           />
+          <p className="mt-1 text-xs text-slate-muted">
+            At least 8 characters, with an uppercase letter, a lowercase letter, and a number.
+          </p>
           {errors.password && (
             <p className="mt-1 text-xs text-error">{errors.password.message}</p>
           )}
