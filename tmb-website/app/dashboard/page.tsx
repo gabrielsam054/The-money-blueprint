@@ -18,27 +18,36 @@ export default async function DashboardPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Defense in depth — middleware.ts already redirects unauthenticated
-  // requests before they reach here, but a Server Component should never
-  // assume that held true by the time it renders.
   if (!user) {
     redirect("/login?redirectTo=/dashboard");
+  }
+
+  interface ProgressRow {
+    chapter_number: number;
+  }
+  interface BookmarkRow {
+    id: string;
+    chapter_number: number;
+    note: string | null;
+    created_at: string;
   }
 
   const [{ data: progress }, { data: bookmarks }] = await Promise.all([
     supabase
       .from("reading_progress")
       .select("chapter_number")
-      .eq("user_id", user.id),
+      .eq("user_id", user.id)
+      .returns<ProgressRow[]>(),
     supabase
       .from("bookmarks")
       .select("id, chapter_number, note, created_at")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .returns<BookmarkRow[]>(),
   ]);
 
   const completedChapters = new Set(
-    (progress ?? []).map((p) => p.chapter_number)
+    (progress ?? []).map((p: ProgressRow) => p.chapter_number)
   );
   const completedCount = completedChapters.size;
   const percentComplete = Math.round((completedCount / totalChapters) * 100);
@@ -63,7 +72,6 @@ export default async function DashboardPage() {
           </form>
         </div>
 
-        {/* Overall progress */}
         <div className="card mt-10">
           <div className="flex items-center justify-between">
             <p className="font-heading text-sm font-semibold text-slate-ink">
@@ -82,7 +90,6 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
-          {/* Per-part progress */}
           <div>
             <h2 className="font-heading text-lg font-semibold text-slate-ink">
               Progress by Part
@@ -117,7 +124,6 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          {/* Bookmarks + AI Coach teaser */}
           <div className="space-y-8">
             <div>
               <h2 className="flex items-center gap-2 font-heading text-lg font-semibold text-slate-ink">
@@ -130,7 +136,7 @@ export default async function DashboardPage() {
                 </p>
               ) : (
                 <ul className="mt-4 space-y-2">
-                  {bookmarks.map((b) => (
+                  {bookmarks.map((b: BookmarkRow) => (
                     <li key={b.id} className="card !p-4 text-sm">
                       <span className="font-medium text-slate-ink">
                         Chapter {b.chapter_number}
