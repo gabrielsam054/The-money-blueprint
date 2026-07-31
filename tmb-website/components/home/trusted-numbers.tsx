@@ -65,8 +65,9 @@ export function TrustedNumbers() {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+      (entries) => {
+        const entry = entries[0];
+        if (entry && entry.isIntersecting) {
           setActive(true);
           obs.disconnect();
         }
