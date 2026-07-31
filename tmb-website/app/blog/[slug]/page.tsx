@@ -11,19 +11,22 @@ export function generateStaticParams() {
 export function generateMetadata({
   params,
 }: {
-  params: { slug: string };
-}): Metadata {
-  const post = blogPosts.find((p) => p.slug === params.slug);
-  if (!post) return {};
-  return { title: post.title, description: post.excerpt };
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  return params.then(({ slug }) => {
+    const post = blogPosts.find((p) => p.slug === slug);
+    if (!post) return {};
+    return { title: post.title, description: post.excerpt };
+  });
 }
 
-export default function BlogPostPage({
+export default async function BlogPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const { slug } = await params;
+  const post = blogPosts.find((p) => p.slug === slug);
   if (!post) notFound();
 
   return (
