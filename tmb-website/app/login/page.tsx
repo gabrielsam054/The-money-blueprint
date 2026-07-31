@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { LoginForm } from "@/components/login-form";
+import { supabaseConfigured } from "@/lib/supabase/is-configured";
+import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 
 export const metadata: Metadata = {
   title: "Log In",
@@ -18,9 +20,13 @@ export default function LoginPage() {
           </h1>
         </div>
         <div className="mt-10">
-          <Suspense fallback={null}>
-            <LoginForm />
-          </Suspense>
+          {supabaseConfigured ? (
+            <Suspense fallback={null}>
+              <LoginForm />
+            </Suspense>
+          ) : (
+            <SupabaseNotConfiguredNotice />
+          )}
         </div>
       </div>
     </section>

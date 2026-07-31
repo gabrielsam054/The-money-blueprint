@@ -2,6 +2,16 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  // Phase 2 (Supabase) isn't configured yet — let every request through
+  // untouched rather than throwing on every single page. Only /dashboard
+  // route protection depends on this; everything else works fine without it.
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    return NextResponse.next();
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -27,6 +37,8 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  // Refreshes the session token if it's expired — required so server
+  // components downstream always see a valid session.
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -44,6 +56,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    /*
+     * Run on everything except static assets and image optimization
+     * files, so the session cookie stays fresh across the whole site.
+     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

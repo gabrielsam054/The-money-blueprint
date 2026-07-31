@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Bookmark as BookmarkIcon, LogOut, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseConfigured } from "@/lib/supabase/is-configured";
+import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 import { parts } from "@/lib/book-data";
 
 export const metadata: Metadata = {
@@ -13,11 +15,22 @@ export const metadata: Metadata = {
 const totalChapters = parts.reduce((sum, p) => sum + p.chapters.length, 0);
 
 export default async function DashboardPage() {
+  if (!supabaseConfigured) {
+    return (
+      <section className="flex min-h-[60vh] items-center justify-center py-20">
+        <SupabaseNotConfiguredNotice />
+      </section>
+    );
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Defense in depth — middleware.ts already redirects unauthenticated
+  // requests before they reach here, but a Server Component should never
+  // assume that held true by the time it renders.
   if (!user) {
     redirect("/login?redirectTo=/dashboard");
   }
@@ -72,6 +85,7 @@ export default async function DashboardPage() {
           </form>
         </div>
 
+        {/* Overall progress */}
         <div className="card mt-10">
           <div className="flex items-center justify-between">
             <p className="font-heading text-sm font-semibold text-slate-ink">
@@ -90,6 +104,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+          {/* Per-part progress */}
           <div>
             <h2 className="font-heading text-lg font-semibold text-slate-ink">
               Progress by Part
@@ -124,6 +139,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
+          {/* Bookmarks + AI Coach teaser */}
           <div className="space-y-8">
             <div>
               <h2 className="flex items-center gap-2 font-heading text-lg font-semibold text-slate-ink">

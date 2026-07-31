@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { SignupForm } from "@/components/signup-form";
+import { supabaseConfigured } from "@/lib/supabase/is-configured";
+import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 
 export const metadata: Metadata = {
   title: "Sign Up",
@@ -21,7 +23,7 @@ export default function SignupPage() {
           </p>
         </div>
         <div className="mt-10">
-          <SignupForm />
+          {supabaseConfigured ? <SignupForm /> : <SupabaseNotConfiguredNotice />}
         </div>
       </div>
     </section>
