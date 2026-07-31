@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-surface text-slate-body font-body antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading text-slate-ink;
+  }
+  ::selection {
+    @apply bg-gold-200/60 text-slate-ink;
+  }
+  :focus-visible {
+    outline: 2px solid #0B3D2E;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .container-content {
+    @apply mx-auto max-w-content px-6 lg:px-8;
+  }
+  .eyebrow {
+    @apply font-heading text-xs font-semibold uppercase tracking-[0.18em] text-gold-600;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-emerald px-7 py-3.5 font-heading text-sm font-semibold text-white shadow-lift transition-transform duration-200 hover:-translate-y-0.5 hover:bg-emerald-600 active:translate-y-0;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-ink/15 bg-white px-7 py-3.5 font-heading text-sm font-semibold text-slate-ink transition-colors duration-200 hover:border-emerald hover:text-emerald;
+  }
+  .card {
+    @apply rounded-xl2 border border-surface-line bg-white p-6 shadow-card;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
