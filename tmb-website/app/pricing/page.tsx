@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { CheckoutButton } from "@/components/checkout-button";
+import { BOOK_PRICE_GHS } from "@/lib/paystack";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -59,7 +61,7 @@ export default function PricingPage() {
               Digital edition (PDF + EPUB)
             </p>
             <p className="mt-6 font-heading text-4xl font-bold text-slate-ink">
-              $29
+              GHS {BOOK_PRICE_GHS}
             </p>
             <ul className="mt-6 space-y-3">
               {included.map((item) => (
@@ -69,9 +71,9 @@ export default function PricingPage() {
                 </li>
               ))}
             </ul>
-            <a href="#" className="btn-primary mt-8 w-full">
-              Get the Book
-            </a>
+            <div className="mt-8">
+              <CheckoutButton />
+            </div>
           </div>
         </div>
 
