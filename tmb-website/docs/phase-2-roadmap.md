@@ -50,27 +50,39 @@ inside the reading experience (e.g., a "Mark chapter read" button on a
 chapter page). The routes work; nothing currently calls them. That's the
 natural next increment.
 
-## 4. AI Coach — Not yet built
+## 4. AI Coach — ✅ Built
 
-Explicitly **not** general-purpose ChatGPT — scoped to this book only.
+Retrieval-augmented generation, not fine-tuning — grounded in the book's
+actual content, not general knowledge:
 
-Recommended approach: retrieval-augmented generation, not fine-tuning.
-1. Chunk the manuscript by chapter (already structurally clean —
-   `lib/book-data.ts` gives you the chapter boundaries) and embed each
-   chunk
-2. Store embeddings in Supabase's `pgvector` extension
-3. On a user question, retrieve the most relevant chunks and pass them as
-   context to a completion call, restricted to answering from that
-   context
-4. Store conversation + message history in `coach_conversations` /
-   `coach_messages` (already in the schema)
+1. `lib/book-content*.ts` — real, condensed content for all 49 chapters
+   (hook, core lesson, mistakes, action steps)
+2. `scripts/generate-embeddings.mjs` — **run this once** to embed those
+   chunks (via Voyage AI's `voyage-3.5`) and upload them to Supabase:
+   ```
+   npx tsx --env-file=.env.local scripts/generate-embeddings.mjs
+   ```
+3. `docs/database-schema-coach.sql` — adds `pgvector`, the `book_chunks`
+   table, and a `match_book_chunks` similarity-search function
+4. `lib/ai-coach.ts` — embeds the user's question, retrieves the most
+   relevant chapters, and streams a Claude response constrained to
+   answering from those excerpts (it's told explicitly to say "the book
+   doesn't cover that" rather than inventing an answer)
+5. `app/dashboard/coach/page.tsx` + `components/coach-chat.tsx` — the
+   actual chat UI, gated behind a successful book purchase
 
-## 5. Payments / Memberships — Not yet built
+**Requires 5 things to actually work**: `ANTHROPIC_API_KEY`,
+`VOYAGE_API_KEY`, the coach SQL migration run, the embedding script run
+once, and at least one `purchases` row with `status = 'success'` for the
+account testing it (i.e., you need to have actually bought the book with
+that account first — or manually flip a test row to `'success'` in the
+Supabase table editor while testing).
 
-Stripe is the natural fit given Vercel + Supabase. A `subscriptions` table
-(user_id, stripe_customer_id, status, tier) gates access to
-`/dashboard/coach` and future course content via a simple RLS policy
-checking `status = 'active'`.
+## 5. Payments — ✅ Built (Paystack, not Stripe)
+
+See `docs/database-schema-purchases.sql` and the checkout flow in
+`app/api/checkout`, `app/checkout/callback`, and
+`app/api/webhooks/paystack`.
 
 ## 6. Suggested Build Order (updated)
 
