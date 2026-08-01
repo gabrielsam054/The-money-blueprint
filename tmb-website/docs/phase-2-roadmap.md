@@ -109,7 +109,29 @@ download buttons for any user with a successful purchase.
 3. ~~Payments (Paystack)~~ ✅
 4. ~~AI Coach~~ ✅
 5. ~~Templates~~ ✅
+6. ~~The actual book file~~ ✅ (a real, late-discovered gap — everything
+   else was built assuming the reader had the book, but nothing actually
+   delivered it until now)
 
 Not yet built, and not originally requested until now: Membership,
 Courses — both still "Coming Soon" placeholders on `/pricing`.
+
+## 8. Book Delivery — ✅ Built (this was missing until a user caught it)
+
+The actual 259-page PDF, gated the same way as templates:
+
+1. Supabase → **Storage** → **New bucket** → name it exactly `books` →
+   **Private**
+2. Upload `The_Modern_Money_Blueprint.pdf` (sent alongside the code) —
+   filename must match exactly what `app/api/book/route.ts` requests
+3. `/api/book` checks purchase status, then returns a 60-second signed
+   URL — same pattern as `/api/templates/[slug]`
+
+Surfaced in three places: a prominent banner at the top of `/dashboard`,
+a direct download button on the checkout success page, and available any
+time via that same dashboard banner going forward.
+
+**Also corrected**: the pricing page previously promised "PDF + EPUB" —
+only a PDF was ever actually built, so the claim was fixed to match what's
+actually delivered rather than leaving a false promise live.
 

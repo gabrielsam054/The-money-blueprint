@@ -79,12 +79,24 @@ function ResultCard({ success, message }: { success: boolean; message: string })
           {success ? "Thank you!" : "Something went wrong"}
         </p>
         <p className="mt-2 text-sm text-slate-muted">{message}</p>
-        <Link
-          href={success ? "/dashboard" : "/pricing"}
-          className="btn-primary mt-8 inline-flex"
-        >
-          {success ? "Go to Dashboard" : "Back to Pricing"} <ArrowRight size={16} />
-        </Link>
+
+        {success ? (
+          <div className="mt-8 flex flex-col gap-3">
+            <a href="/api/book" className="btn-primary inline-flex justify-center">
+              Download Your Book <ArrowRight size={16} />
+            </a>
+            <Link
+              href="/dashboard"
+              className="text-sm font-medium text-slate-muted hover:text-emerald"
+            >
+              Or go to your dashboard
+            </Link>
+          </div>
+        ) : (
+          <Link href="/pricing" className="btn-primary mt-8 inline-flex">
+            Back to Pricing <ArrowRight size={16} />
+          </Link>
+        )}
       </div>
     </section>
   );

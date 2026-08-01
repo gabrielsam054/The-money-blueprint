@@ -51,7 +51,7 @@ export default function PricingPage() {
               The Modern Money Blueprint
             </h2>
             <p className="mt-2 text-sm text-slate-muted">
-              Digital edition (PDF + EPUB)
+              Digital edition (PDF)
             </p>
             <p className="mt-6 font-heading text-4xl font-bold text-slate-ink">
               GHS {BOOK_PRICE_GHS}

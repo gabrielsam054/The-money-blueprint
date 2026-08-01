@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Sparkles, FileSpreadsheet } from "lucide-react";
+import { LogOut, Sparkles, FileSpreadsheet, Download, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/supabase/is-configured";
 import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
     created_at: string;
   }
 
-  const [{ data: progress }, { data: bookmarks }] = await Promise.all([
+  const [{ data: progress }, { data: bookmarks }, { data: purchase }] = await Promise.all([
     supabase
       .from("reading_progress")
       .select("chapter_number")
@@ -56,7 +56,15 @@ export default async function DashboardPage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .returns<BookmarkRow[]>(),
+    supabase
+      .from("purchases")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("status", "success")
+      .limit(1)
+      .maybeSingle(),
   ]);
+  const hasPurchased = !!purchase;
 
   return (
     <section className="py-16">
@@ -77,6 +85,42 @@ export default async function DashboardPage() {
             </button>
           </form>
         </div>
+
+        {hasPurchased ? (
+          <a
+            href="/api/book"
+            className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl2 bg-emerald p-6 text-center shadow-lift sm:flex-row sm:text-left"
+          >
+            <div className="flex items-center gap-4">
+              <BookOpen className="shrink-0 text-gold-200" size={28} />
+              <div>
+                <p className="font-heading text-lg font-semibold text-white">
+                  Your Book
+                </p>
+                <p className="text-sm text-white/70">
+                  The complete 259-page PDF — download it any time.
+                </p>
+              </div>
+            </div>
+            <span className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 font-heading text-sm font-semibold text-emerald">
+              <Download size={16} /> Download PDF
+            </span>
+          </a>
+        ) : (
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl2 border-2 border-dashed border-surface-line p-6 text-center sm:flex-row sm:text-left">
+            <div>
+              <p className="font-heading text-lg font-semibold text-slate-ink">
+                You haven&apos;t purchased the book yet
+              </p>
+              <p className="text-sm text-slate-muted">
+                Buy it to unlock the download, the AI Coach, and the templates.
+              </p>
+            </div>
+            <Link href="/pricing" className="btn-primary shrink-0">
+              Get the Book
+            </Link>
+          </div>
+        )}
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.4fr_1fr]">
           <ChapterProgressList
