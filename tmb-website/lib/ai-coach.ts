@@ -6,13 +6,10 @@ import { allBookChunks } from "@/lib/book-content";
  * second API account.
  *
  * The full condensed book content (all 49 chapters, ~10-14k tokens) is
- * included directly in every request as a cached system-prompt block,
+ * included directly in every request as part of the system prompt,
  * rather than retrieving a subset via embeddings first. At this content
  * size, that's simpler and just as accurate — Claude finds what's
- * relevant on its own — and Anthropic's prompt caching means the book
- * content is only charged at full price on the first request; every
- * request after that within the cache window reads it at a fraction of
- * the cost, so this doesn't get expensive as conversations continue.
+ * relevant on its own.
  */
 export const aiCoachConfigured = !!process.env.ANTHROPIC_API_KEY;
 
@@ -42,18 +39,7 @@ export async function* streamCoachResponse(
   const stream = await anthropic.messages.stream({
     model: "claude-sonnet-5",
     max_tokens: 1024,
-    system: [
-      { type: "text", text: SYSTEM_INSTRUCTIONS },
-      {
-        type: "text",
-        text: `Full book content:\n\n${BOOK_CONTENT_BLOCK}`,
-        // Marks this large, static block as cacheable — repeated requests
-        // in the same conversation (and across users, within Anthropic's
-        // cache window) read it at a fraction of normal input cost
-        // instead of paying full price every single message.
-        cache_control: { type: "ephemeral" },
-      },
-    ],
+    system: `${SYSTEM_INSTRUCTIONS}\n\nFull book content:\n\n${BOOK_CONTENT_BLOCK}`,
     messages: [
       ...conversationHistory.map((m) => ({ role: m.role, content: m.content })),
       { role: "user" as const, content: question },
