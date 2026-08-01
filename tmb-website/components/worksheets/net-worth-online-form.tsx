@@ -31,10 +31,11 @@ export function NetWorthOnlineForm({
   const { data, update, status } = useWorksheetAutosave("net-worth-tracker", initial);
 
   function updateCell(month: number, field: keyof MonthRow, value: string) {
-    update((prev) => ({
-      ...prev,
-      [String(month)]: { ...prev[String(month)], [field]: value },
-    }));
+    update((prev) => {
+      const key = String(month);
+      const currentRow: MonthRow = prev[key] ?? { ...EMPTY_ROW };
+      return { ...prev, [key]: { ...currentRow, [field]: value } };
+    });
   }
 
   return (

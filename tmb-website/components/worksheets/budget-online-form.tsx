@@ -42,7 +42,10 @@ export function BudgetOnlineForm({
   const { data, update, status } = useWorksheetAutosave("monthly-budget-template", initial);
 
   function updateCell(key: string, field: keyof BudgetRow, value: string) {
-    update((prev) => ({ ...prev, [key]: { ...prev[key], [field]: value } }));
+    update((prev) => {
+      const currentRow: BudgetRow = prev[key] ?? { budgeted: "", actual: "" };
+      return { ...prev, [key]: { ...currentRow, [field]: value } };
+    });
   }
 
   function sectionTotal(section: BudgetSection, field: keyof BudgetRow) {
