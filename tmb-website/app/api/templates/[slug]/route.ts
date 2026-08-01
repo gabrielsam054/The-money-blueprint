@@ -49,14 +49,27 @@ export async function GET(
   // Signed URL generation needs elevated storage permissions, so this
   // uses the service-role client — the purchase check above is the real
   // gate, this is just the mechanism for producing a temporary link.
-  const serviceClient = createServiceClient();
-  const { data: signed, error } = await serviceClient.storage
-    .from("templates")
-    .createSignedUrl(template.filename, 60);
-
-  if (error || !signed) {
+  let signed;
+  try {
+    const serviceClient = createServiceClient();
+    const result = await serviceClient.storage
+      .from("templates")
+      .createSignedUrl(template.filename, 60);
+    if (result.error || !result.data) {
+      return NextResponse.json(
+        { error: "Couldn't generate a download link. The file may not be uploaded yet." },
+        { status: 500 }
+      );
+    }
+    signed = result.data;
+  } catch (err) {
     return NextResponse.json(
-      { error: "Couldn't generate a download link. The file may not be uploaded yet." },
+      {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Server isn't configured for downloads yet.",
+      },
       { status: 500 }
     );
   }

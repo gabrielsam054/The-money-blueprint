@@ -36,14 +36,31 @@ export async function GET() {
     );
   }
 
-  const serviceClient = createServiceClient();
-  const { data: signed, error } = await serviceClient.storage
-    .from("books")
-    .createSignedUrl(BOOK_FILENAME, 60);
-
-  if (error || !signed) {
+  let signed;
+  try {
+    const serviceClient = createServiceClient();
+    const result = await serviceClient.storage
+      .from("books")
+      .createSignedUrl(BOOK_FILENAME, 60);
+    if (result.error || !result.data) {
+      return NextResponse.json(
+        { error: "Couldn't generate a download link. The file may not be uploaded yet." },
+        { status: 500 }
+      );
+    }
+    signed = result.data;
+  } catch (err) {
+    // createServiceClient() throws if SUPABASE_SERVICE_ROLE_KEY isn't
+    // set — catching this explicitly means the client always gets a
+    // real JSON error to display, never an uncaught crash with an empty
+    // response body that breaks res.json() on the client side.
     return NextResponse.json(
-      { error: "Couldn't generate a download link. The file may not be uploaded yet." },
+      {
+        error:
+          err instanceof Error
+            ? err.message
+            : "Server isn't configured for downloads yet.",
+      },
       { status: 500 }
     );
   }

@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
+import { safeJson } from "@/lib/safe-json";
 
 export function DownloadButton({
   href,
@@ -20,8 +21,8 @@ export function DownloadButton({
     setError(null);
     try {
       const res = await fetch(href);
-      const json = await res.json();
-      if (!res.ok) {
+      const json = await safeJson<{ url?: string; error?: string }>(res, {});
+      if (!res.ok || !json.url) {
         throw new Error(json.error ?? "Download failed. Please try again.");
       }
       window.location.href = json.url;

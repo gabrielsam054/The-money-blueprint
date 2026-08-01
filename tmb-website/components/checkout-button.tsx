@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { safeJson } from "@/lib/safe-json";
 
 export function CheckoutButton() {
   const router = useRouter();
@@ -14,13 +15,17 @@ export function CheckoutButton() {
     setError(null);
     try {
       const res = await fetch("/api/checkout", { method: "POST" });
-      const json = await res.json();
+      const json = await safeJson<{
+        redirectTo?: string;
+        error?: string;
+        authorization_url?: string;
+      }>(res, {});
 
       if (res.status === 401 && json.redirectTo) {
         router.push(json.redirectTo);
         return;
       }
-      if (!res.ok) {
+      if (!res.ok || !json.authorization_url) {
         throw new Error(json.error ?? "Checkout failed. Please try again.");
       }
       window.location.href = json.authorization_url;

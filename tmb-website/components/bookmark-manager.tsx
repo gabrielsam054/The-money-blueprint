@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { Bookmark as BookmarkIcon, Plus, Trash2 } from "lucide-react";
+import { safeJson } from "@/lib/safe-json";
 
 interface Bookmark {
   id: string;
@@ -37,9 +38,9 @@ export function BookmarkManager({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ chapterNumber: num, note: note || undefined }),
         });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error ?? "Failed to save");
-        setBookmarks((prev) => [json.bookmark, ...prev]);
+        const json = await safeJson<{ bookmark?: Bookmark; error?: string }>(res, {});
+        if (!res.ok || !json.bookmark) throw new Error(json.error ?? "Failed to save");
+        setBookmarks((prev) => [json.bookmark as Bookmark, ...prev]);
         setChapterNumber("");
         setNote("");
         setShowForm(false);

@@ -7,6 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { isDisposableEmail } from "@/lib/disposable-email-domains";
+import { safeJson } from "@/lib/safe-json";
 
 const schema = z.object({
   fullName: z.string().min(2, "Enter your name"),
@@ -44,7 +45,7 @@ export function SignupForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     });
-    const json = await res.json();
+    const json = await safeJson<{ error?: string }>(res, {});
     if (!res.ok) {
       setServerError(json.error ?? "Something went wrong. Please try again.");
       return;
