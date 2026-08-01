@@ -135,3 +135,23 @@ time via that same dashboard banner going forward.
 only a PDF was ever actually built, so the claim was fixed to match what's
 actually delivered rather than leaving a false promise live.
 
+## 9. In-App Reader — ✅ Built (another real gap a user caught)
+
+The dashboard's chapter checklist let people mark chapters "read" with
+nothing to actually read in-app — they'd have to read the downloaded PDF
+externally, then come back to check boxes. Now there's a real reader:
+
+1. `lib/reader-content*.ts` — the **full, real content** of all 49
+   chapters (hook, every section's actual prose, full case studies,
+   fully-explained mistakes, takeaways — ~37,000 words total), extracted
+   programmatically from the original manuscript source, not summarized
+2. `app/dashboard/read/[chapter]/page.tsx` — renders each chapter, gated
+   by purchase, with a working "Mark as Read" button wired to the
+   already-existing `/api/progress` route, plus previous/next navigation
+3. Every chapter title in the dashboard's progress checklist now links
+   directly to its reader page
+
+No new setup required — this uses content bundled directly in the
+codebase, not Supabase Storage, since it needs to load instantly as you
+navigate between chapters rather than fetching a file each time.
+

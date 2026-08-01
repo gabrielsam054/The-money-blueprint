@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { Check } from "lucide-react";
 import { parts } from "@/lib/book-data";
 import { cn } from "@/lib/utils";
@@ -89,29 +90,36 @@ export function ChapterProgressList({
                   const isDone = completed.has(chapter.number);
                   return (
                     <li key={chapter.number}>
-                      <button
-                        type="button"
-                        onClick={() => toggleChapter(chapter.number)}
-                        disabled={pending}
+                      <div
                         className={cn(
-                          "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors hover:bg-surface-soft disabled:opacity-60",
+                          "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors hover:bg-surface-soft",
                           errorChapter === chapter.number && "bg-error/5"
                         )}
                       >
-                        <span
+                        <button
+                          type="button"
+                          onClick={() => toggleChapter(chapter.number)}
+                          disabled={pending}
+                          aria-label={isDone ? "Mark as unread" : "Mark as read"}
                           className={cn(
-                            "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors",
+                            "flex h-5 w-5 shrink-0 items-center justify-center rounded border-2 transition-colors disabled:opacity-60",
                             isDone
                               ? "border-emerald bg-emerald text-white"
                               : "border-surface-line"
                           )}
                         >
                           {isDone && <Check size={13} strokeWidth={3} />}
-                        </span>
-                        <span className={cn(isDone && "text-slate-muted line-through")}>
+                        </button>
+                        <Link
+                          href={`/dashboard/read/${chapter.number}`}
+                          className={cn(
+                            "flex-1 hover:text-emerald hover:underline",
+                            isDone && "text-slate-muted line-through"
+                          )}
+                        >
                           Ch. {chapter.number} — {chapter.title}
-                        </span>
-                      </button>
+                        </Link>
+                      </div>
                       {errorChapter === chapter.number && (
                         <p className="pl-10 text-xs text-error">
                           Couldn&apos;t save — try again.
