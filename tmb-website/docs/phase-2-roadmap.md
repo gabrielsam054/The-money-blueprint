@@ -155,3 +155,39 @@ No new setup required — this uses content bundled directly in the
 codebase, not Supabase Storage, since it needs to load instantly as you
 navigate between chapters rather than fetching a file each time.
 
+## 10. Online, Fillable Templates — ✅ Built
+
+Each of the 6 templates is now usable two ways: download the Excel file
+(unchanged), or fill it in directly at `/dashboard/templates/[slug]` —
+real inputs, auto-saved 1.2s after you stop typing, still there next time
+you visit.
+
+**No new setup** — this reuses `worksheet_responses`, a table that
+already existed from the original Phase 2 schema and was never actually
+used until now.
+
+- `app/api/worksheets/[slug]/route.ts` — generic save/load, works for any
+  of the 6 templates by slug, purchase-gated
+- `lib/use-worksheet-autosave.ts` — the shared debounced-save hook every
+  form uses
+- `components/worksheets/*` — 4 form types: a numeric grid with live
+  totals (Net Worth), a sectioned budget grid with a balance check, a
+  repeatable-row goal tracker, and a generic prompt form (reused for the
+  3 reflection-style templates)
+
+## 11. Two Fixes From Direct User Testing
+
+**The HTTP 500 error**: download links were raw `<a href>` tags pointing
+straight at API routes — any failure (like a Storage bucket not existing
+yet) meant the *browser* rendered its own generic error page, not
+anything in this app's control. Fixed by making every download a
+client-side fetch that checks the response first
+(`components/download-button.tsx`), only navigating on success and
+showing a friendly inline message otherwise.
+
+**Nav visibility after purchase**: Read a Sample, Pricing, and the Author
+link now disappear from the nav (`components/nav.tsx`,
+`components/nav-server.tsx`) once a user has a successful purchase —
+those are pre-purchase decision-making pages, not useful once someone
+already owns the book.
+

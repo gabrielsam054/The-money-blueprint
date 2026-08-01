@@ -63,13 +63,13 @@ export default async function TemplatesPage() {
     <section className="py-16">
       <div className="container-content max-w-3xl">
         <div className="text-center">
-          <span className="eyebrow">Fillable Excel Files</span>
+          <span className="eyebrow">Trackers, Planners & Checklists</span>
           <h1 className="mt-2 font-heading text-3xl font-bold text-slate-ink">
             Templates
           </h1>
           <p className="mt-3 text-sm text-slate-muted">
-            Real spreadsheets with working formulas — not just the static
-            tables from the book&apos;s appendix.
+            Fill them in right here — saved automatically — or download the
+            Excel version for offline use. Either way, same content.
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export default async function TemplatesPage() {
           {downloadableTemplates.map((t) => (
             <div
               key={t.slug}
-              className="card flex items-center justify-between gap-4"
+              className="card flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-4">
                 <FileSpreadsheet className="shrink-0 text-emerald" size={24} />
@@ -90,12 +90,20 @@ export default async function TemplatesPage() {
                   </p>
                 </div>
               </div>
-              <DownloadButton
-                href={`/api/templates/${t.slug}`}
-                className="flex shrink-0 items-center gap-2 rounded-full border border-surface-line px-4 py-2 text-xs font-semibold text-slate-ink transition-colors hover:border-emerald hover:text-emerald disabled:opacity-60"
-              >
-                <Download size={16} /> Download
-              </DownloadButton>
+              <div className="flex shrink-0 items-center gap-2">
+                <Link
+                  href={`/dashboard/templates/${t.slug}`}
+                  className="btn-primary !px-4 !py-2 text-xs"
+                >
+                  Fill Online
+                </Link>
+                <DownloadButton
+                  href={`/api/templates/${t.slug}`}
+                  className="flex items-center gap-2 rounded-full border border-surface-line px-4 py-2 text-xs font-semibold text-slate-ink transition-colors hover:border-emerald hover:text-emerald disabled:opacity-60"
+                >
+                  <Download size={16} />
+                </DownloadButton>
+              </div>
             </div>
           ))}
         </div>
