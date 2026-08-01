@@ -12,8 +12,8 @@ export interface BookChunk {
  * actually needs to be retrievable for the AI Coach to answer specific
  * questions accurately rather than generically.
  *
- * This is the source data for scripts/generate-embeddings.mjs, which
- * embeds each chunk and uploads it to the book_chunks table.
+ * This is the source data included directly in the AI Coach's context —
+ * see lib/ai-coach.ts. No embedding or vector database step needed.
  */
 export const bookChunks: BookChunk[] = [
   {

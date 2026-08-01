@@ -82,7 +82,6 @@ export async function POST(request: Request) {
 
       try {
         for await (const textChunk of streamCoachResponse(
-          supabase,
           message,
           (history ?? []).map((h) => ({
             role: h.role as "user" | "assistant",

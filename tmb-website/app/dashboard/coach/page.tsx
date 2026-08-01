@@ -41,7 +41,7 @@ export default async function CoachPage() {
           </p>
           <p className="mt-2 text-sm text-slate-muted">
             This site&apos;s owner needs to add ANTHROPIC_API_KEY and
-            VOYAGE_API_KEY, and run the embedding script — see{" "}
+            ANTHROPIC_API_KEY — see{" "}
             <code className="rounded bg-surface-soft px-1.5 py-0.5 text-xs">
               docs/phase-2-roadmap.md
             </code>

@@ -52,30 +52,24 @@ natural next increment.
 
 ## 4. AI Coach — ✅ Built
 
-Retrieval-augmented generation, not fine-tuning — grounded in the book's
-actual content, not general knowledge:
+Single provider (Claude only, no embeddings/vector database) — grounded
+in the book's actual content via context, not fine-tuning:
 
 1. `lib/book-content*.ts` — real, condensed content for all 49 chapters
    (hook, core lesson, mistakes, action steps)
-2. `scripts/generate-embeddings.mjs` — **run this once** to embed those
-   chunks (via Voyage AI's `voyage-3.5`) and upload them to Supabase:
-   ```
-   npx tsx --env-file=.env.local scripts/generate-embeddings.mjs
-   ```
-3. `docs/database-schema-coach.sql` — adds `pgvector`, the `book_chunks`
-   table, and a `match_book_chunks` similarity-search function
-4. `lib/ai-coach.ts` — embeds the user's question, retrieves the most
-   relevant chapters, and streams a Claude response constrained to
-   answering from those excerpts (it's told explicitly to say "the book
-   doesn't cover that" rather than inventing an answer)
-5. `app/dashboard/coach/page.tsx` + `components/coach-chat.tsx` — the
+2. `lib/ai-coach.ts` — includes that full content directly in every
+   request as a cached system-prompt block (Anthropic's prompt caching
+   means repeat requests read it at a fraction of normal cost, not full
+   price every message), and streams a response constrained to answering
+   from it (it's told explicitly to say "the book doesn't cover that"
+   rather than inventing an answer)
+3. `app/dashboard/coach/page.tsx` + `components/coach-chat.tsx` — the
    actual chat UI, gated behind a successful book purchase
 
-**Requires 5 things to actually work**: `ANTHROPIC_API_KEY`,
-`VOYAGE_API_KEY`, the coach SQL migration run, the embedding script run
-once, and at least one `purchases` row with `status = 'success'` for the
-account testing it (i.e., you need to have actually bought the book with
-that account first — or manually flip a test row to `'success'` in the
+**Requires 2 things to actually work**: `ANTHROPIC_API_KEY`, and at least
+one `purchases` row with `status = 'success'` for the account testing it
+(i.e., you need to have actually bought the book with that account first
+— or manually flip a test row to `'success'` in the
 Supabase table editor while testing).
 
 ## 5. Payments — ✅ Built (Paystack, not Stripe)
