@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/supabase/is-configured";
 import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 import { downloadableTemplates } from "@/lib/templates-data";
+import { DownloadButton } from "@/components/download-button";
 
 export const metadata: Metadata = {
   title: "Templates",
@@ -74,10 +75,9 @@ export default async function TemplatesPage() {
 
         <div className="mt-12 space-y-3">
           {downloadableTemplates.map((t) => (
-            <a
+            <div
               key={t.slug}
-              href={`/api/templates/${t.slug}`}
-              className="card flex items-center justify-between gap-4 transition-shadow hover:shadow-lift"
+              className="card flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4">
                 <FileSpreadsheet className="shrink-0 text-emerald" size={24} />
@@ -90,8 +90,13 @@ export default async function TemplatesPage() {
                   </p>
                 </div>
               </div>
-              <Download className="shrink-0 text-slate-muted" size={18} />
-            </a>
+              <DownloadButton
+                href={`/api/templates/${t.slug}`}
+                className="flex shrink-0 items-center gap-2 rounded-full border border-surface-line px-4 py-2 text-xs font-semibold text-slate-ink transition-colors hover:border-emerald hover:text-emerald disabled:opacity-60"
+              >
+                <Download size={16} /> Download
+              </DownloadButton>
+            </div>
           ))}
         </div>
       </div>

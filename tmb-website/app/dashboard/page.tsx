@@ -7,6 +7,7 @@ import { supabaseConfigured } from "@/lib/supabase/is-configured";
 import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 import { ChapterProgressList } from "@/components/chapter-progress-list";
 import { BookmarkManager } from "@/components/bookmark-manager";
+import { DownloadButton } from "@/components/download-button";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -87,10 +88,7 @@ export default async function DashboardPage() {
         </div>
 
         {hasPurchased ? (
-          <a
-            href="/api/book"
-            className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl2 bg-emerald p-6 text-center shadow-lift sm:flex-row sm:text-left"
-          >
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl2 bg-emerald p-6 text-center shadow-lift sm:flex-row sm:text-left">
             <div className="flex items-center gap-4">
               <BookOpen className="shrink-0 text-gold-200" size={28} />
               <div>
@@ -98,14 +96,25 @@ export default async function DashboardPage() {
                   Your Book
                 </p>
                 <p className="text-sm text-white/70">
-                  The complete 259-page PDF — download it any time.
+                  Read it online, or download the complete 259-page PDF.
                 </p>
               </div>
             </div>
-            <span className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 font-heading text-sm font-semibold text-emerald">
-              <Download size={16} /> Download PDF
-            </span>
-          </a>
+            <div className="flex shrink-0 items-center gap-3">
+              <Link
+                href="/dashboard/read/1"
+                className="rounded-full border border-white/30 px-5 py-2.5 font-heading text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                Read Online
+              </Link>
+              <DownloadButton
+                href="/api/book"
+                className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 font-heading text-sm font-semibold text-emerald disabled:opacity-70"
+              >
+                <Download size={16} /> Download PDF
+              </DownloadButton>
+            </div>
+          </div>
         ) : (
           <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl2 border-2 border-dashed border-surface-line p-6 text-center sm:flex-row sm:text-left">
             <div>

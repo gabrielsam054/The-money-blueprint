@@ -66,5 +66,5 @@ export async function GET(
     asset_slug: slug,
   });
 
-  return NextResponse.redirect(signed.signedUrl);
+  return NextResponse.json({ url: signed.signedUrl });
 }

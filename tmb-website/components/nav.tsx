@@ -5,16 +5,22 @@ import Link from "next/link";
 import { Menu, X, LayoutDashboard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const links = [
-  { href: "/about-the-book", label: "About the Book" },
-  { href: "/table-of-contents", label: "Table of Contents" },
-  { href: "/read-a-sample", label: "Read a Sample" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/about-gabriel-sam", label: "Author" },
-  { href: "/blog", label: "Blog" },
+const allLinks = [
+  { href: "/about-the-book", label: "About the Book", hideIfPurchased: false },
+  { href: "/table-of-contents", label: "Table of Contents", hideIfPurchased: false },
+  { href: "/read-a-sample", label: "Read a Sample", hideIfPurchased: true },
+  { href: "/pricing", label: "Pricing", hideIfPurchased: true },
+  { href: "/about-gabriel-sam", label: "Author", hideIfPurchased: true },
+  { href: "/blog", label: "Blog", hideIfPurchased: false },
 ];
 
-export function Nav({ isAuthed = false }: { isAuthed?: boolean }) {
+export function Nav({
+  isAuthed = false,
+  hasPurchased = false,
+}: {
+  isAuthed?: boolean;
+  hasPurchased?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -24,6 +30,11 @@ export function Nav({ isAuthed = false }: { isAuthed?: boolean }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Once someone's bought the book, sampling it, pricing it, and reading
+  // an author bio are all irrelevant — they're in "use the product" mode,
+  // not "decide whether to buy" mode.
+  const links = allLinks.filter((l) => !(hasPurchased && l.hideIfPurchased));
 
   return (
     <header
@@ -69,9 +80,11 @@ export function Nav({ isAuthed = false }: { isAuthed?: boolean }) {
               Log In
             </Link>
           )}
-          <Link href="/pricing" className="btn-primary">
-            Get the Book
-          </Link>
+          {!hasPurchased && (
+            <Link href="/pricing" className="btn-primary">
+              Get the Book
+            </Link>
+          )}
         </div>
 
         <button
@@ -107,11 +120,13 @@ export function Nav({ isAuthed = false }: { isAuthed?: boolean }) {
                 {isAuthed ? "Dashboard" : "Log In"}
               </Link>
             </li>
-            <li className="pt-2">
-              <Link href="/pricing" className="btn-primary w-full" onClick={() => setOpen(false)}>
-                Get the Book
-              </Link>
-            </li>
+            {!hasPurchased && (
+              <li className="pt-2">
+                <Link href="/pricing" className="btn-primary w-full" onClick={() => setOpen(false)}>
+                  Get the Book
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       )}

@@ -53,5 +53,10 @@ export async function GET() {
     asset_slug: "the-book",
   });
 
-  return NextResponse.redirect(signed.signedUrl);
+  // JSON, not a redirect — a raw <a href> hitting this route directly
+  // would show the browser's own ugly generic error page on any
+  // non-2xx response, with no chance to display a friendly message.
+  // The client component (components/download-button.tsx) fetches this,
+  // checks the response, and navigates itself only on success.
+  return NextResponse.json({ url: signed.signedUrl });
 }

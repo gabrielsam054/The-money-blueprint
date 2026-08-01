@@ -4,8 +4,8 @@ import { supabaseConfigured } from "@/lib/supabase/is-configured";
 
 /**
  * Thin Server Component so the (client) Nav can know whether someone's
- * signed in without shipping any Supabase code to the browser bundle
- * just to check auth state.
+ * signed in and whether they've purchased, without shipping any
+ * Supabase code to the browser bundle just to check that.
  *
  * This renders on every page via the root layout, so it must never throw
  * — if Supabase isn't configured yet (Phase 2 not set up), it simply
@@ -13,7 +13,7 @@ import { supabaseConfigured } from "@/lib/supabase/is-configured";
  */
 export async function NavServer() {
   if (!supabaseConfigured) {
-    return <Nav isAuthed={false} />;
+    return <Nav isAuthed={false} hasPurchased={false} />;
   }
 
   try {
@@ -21,8 +21,21 @@ export async function NavServer() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    return <Nav isAuthed={!!user} />;
+
+    if (!user) {
+      return <Nav isAuthed={false} hasPurchased={false} />;
+    }
+
+    const { data: purchase } = await supabase
+      .from("purchases")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("status", "success")
+      .limit(1)
+      .maybeSingle();
+
+    return <Nav isAuthed={true} hasPurchased={!!purchase} />;
   } catch {
-    return <Nav isAuthed={false} />;
+    return <Nav isAuthed={false} hasPurchased={false} />;
   }
 }

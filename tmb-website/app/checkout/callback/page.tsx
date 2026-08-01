@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { verifyTransaction } from "@/lib/paystack";
+import { DownloadButton } from "@/components/download-button";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -82,9 +83,12 @@ function ResultCard({ success, message }: { success: boolean; message: string })
 
         {success ? (
           <div className="mt-8 flex flex-col gap-3">
-            <a href="/api/book" className="btn-primary inline-flex justify-center">
+            <DownloadButton
+              href="/api/book"
+              className="btn-primary inline-flex justify-center disabled:opacity-70"
+            >
               Download Your Book <ArrowRight size={16} />
-            </a>
+            </DownloadButton>
             <Link
               href="/dashboard"
               className="text-sm font-medium text-slate-muted hover:text-emerald"
