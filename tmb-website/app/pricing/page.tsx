@@ -13,7 +13,8 @@ const included = [
   "Full 259-page manuscript, 10 parts, 49 chapters",
   "The complete 520-idea business library",
   "12-tool appendix workbook (trackers, templates, checklists)",
-  "AI Prompt Library for research, marketing, and automation",
+  "6 fillable Excel templates with working formulas",
+  "AI Coach trained on this book's frameworks, not general ChatGPT",
   "Lifetime access to future edits of this edition",
 ];
 
@@ -23,16 +24,8 @@ const future = [
     desc: "Monthly live Q&As and an ongoing community of readers building alongside you.",
   },
   {
-    name: "AI Coach",
-    desc: "An assistant trained specifically on this book's frameworks — not general ChatGPT.",
-  },
-  {
     name: "Courses",
     desc: "Deep-dive video courses on the highest-leverage parts of the book.",
-  },
-  {
-    name: "Templates",
-    desc: "Done-for-you spreadsheet and Notion versions of every workbook tool.",
   },
 ];
 

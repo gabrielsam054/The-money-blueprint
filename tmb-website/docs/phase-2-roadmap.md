@@ -78,12 +78,38 @@ See `docs/database-schema-purchases.sql` and the checkout flow in
 `app/api/checkout`, `app/checkout/callback`, and
 `app/api/webhooks/paystack`.
 
-## 6. Suggested Build Order (updated)
+## 6. Templates — ✅ Built
 
-1. ~~Auth (login/signup, middleware, session-aware Nav state)~~ ✅ Done
-2. ~~Dashboard read/write (progress, bookmarks)~~ ✅ Done
-3. Wire "mark as read" / "bookmark" buttons into an actual chapter-reading
-   UI (the routes exist; nothing calls them yet)
-4. Stripe + subscriptions table
-5. AI Coach (RAG pipeline)
+Six of the book's 12 workbook tools, built as real, fillable `.xlsx`
+files with working formulas (auto-calculating net worth, budget
+variance, etc.) — not just the static tables in the book's own appendix.
+The other 6 (checklists + the AI Prompt Library) stay as book-appendix
+content only, since a checklist doesn't gain much from being a separate
+spreadsheet.
+
+**Setup — one manual step, no SQL migration needed** (`downloads_log`
+already existed in the original schema):
+
+1. Supabase dashboard → **Storage** (left sidebar) → **New bucket**
+2. Name it exactly `templates`, and set it to **Private** (not public —
+   access is gated by purchase status in `app/api/templates/[slug]`, and
+   a public bucket would bypass that entirely)
+3. Upload all 6 `.xlsx` files into that bucket, filenames exactly as
+   sent (e.g. `Net_Worth_Tracker.xlsx`) — they must match
+   `lib/templates-data.ts`'s `filename` field exactly, or the signed URL
+   generation will fail to find them
+
+Once uploaded, `/dashboard/templates` will show all 6 with working
+download buttons for any user with a successful purchase.
+
+## 7. Suggested Build Order — all originally-planned items done
+
+1. ~~Auth~~ ✅
+2. ~~Dashboard read/write (progress, bookmarks)~~ ✅
+3. ~~Payments (Paystack)~~ ✅
+4. ~~AI Coach~~ ✅
+5. ~~Templates~~ ✅
+
+Not yet built, and not originally requested until now: Membership,
+Courses — both still "Coming Soon" placeholders on `/pricing`.
 

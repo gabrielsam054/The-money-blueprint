@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LogOut, Sparkles } from "lucide-react";
+import { LogOut, Sparkles, FileSpreadsheet } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/supabase/is-configured";
 import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
@@ -96,6 +96,19 @@ export default async function DashboardPage() {
               </p>
               <p className="mt-1 text-xs text-slate-muted">
                 Trained specifically on this book, not general ChatGPT.
+              </p>
+            </Link>
+
+            <Link
+              href="/dashboard/templates"
+              className="card block !p-5 text-center transition-shadow hover:shadow-lift"
+            >
+              <FileSpreadsheet className="mx-auto text-emerald" size={22} />
+              <p className="mt-2 font-heading text-sm font-semibold text-slate-ink">
+                Download Templates
+              </p>
+              <p className="mt-1 text-xs text-slate-muted">
+                6 fillable Excel workbook tools, ready to use.
               </p>
             </Link>
           </div>
