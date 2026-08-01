@@ -1,5 +1,6 @@
 import { Hero } from "@/components/home/hero";
 import { TrustedNumbers } from "@/components/home/trusted-numbers";
+import { InstantAccess } from "@/components/home/instant-access";
 import { InsideTheBook } from "@/components/home/inside-the-book";
 import { BookShowcase } from "@/components/home/book-showcase";
 import { Comparison } from "@/components/home/comparison";
@@ -13,6 +14,7 @@ export default function HomePage() {
     <>
       <Hero />
       <TrustedNumbers />
+      <InstantAccess />
       <InsideTheBook />
       <BookShowcase />
       <Comparison />
