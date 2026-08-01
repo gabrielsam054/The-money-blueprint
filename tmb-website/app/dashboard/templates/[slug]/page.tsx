@@ -7,9 +7,9 @@ import { supabaseConfigured } from "@/lib/supabase/is-configured";
 import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 import { downloadableTemplates } from "@/lib/templates-data";
 import { DownloadButton } from "@/components/download-button";
-import { NetWorthOnlineForm } from "@/components/worksheets/net-worth-online-form";
-import { BudgetOnlineForm } from "@/components/worksheets/budget-online-form";
-import { GoalTrackerOnlineForm } from "@/components/worksheets/goal-tracker-online-form";
+import { NetWorthOnlineForm, type NetWorthData } from "@/components/worksheets/net-worth-online-form";
+import { BudgetOnlineForm, type BudgetData } from "@/components/worksheets/budget-online-form";
+import { GoalTrackerOnlineForm, type GoalTrackerData } from "@/components/worksheets/goal-tracker-online-form";
 import { PromptOnlineForm } from "@/components/worksheets/prompt-online-form";
 import {
   sideHustlePlannerFields,
@@ -96,11 +96,23 @@ export default async function OnlineTemplatePage({
   function renderForm() {
     switch (slug) {
       case "net-worth-tracker":
-        return <NetWorthOnlineForm initialResponses={initialResponses} />;
+        return (
+          <NetWorthOnlineForm
+            initialResponses={initialResponses as Partial<NetWorthData>}
+          />
+        );
       case "monthly-budget-template":
-        return <BudgetOnlineForm initialResponses={initialResponses} />;
+        return (
+          <BudgetOnlineForm
+            initialResponses={initialResponses as Partial<BudgetData>}
+          />
+        );
       case "goal-tracker":
-        return <GoalTrackerOnlineForm initialResponses={initialResponses} />;
+        return (
+          <GoalTrackerOnlineForm
+            initialResponses={initialResponses as Partial<GoalTrackerData>}
+          />
+        );
       case "side-hustle-planner":
         return (
           <PromptOnlineForm

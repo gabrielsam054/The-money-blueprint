@@ -3,7 +3,7 @@
 import { useWorksheetAutosave } from "@/lib/use-worksheet-autosave";
 import { SaveStatusIndicator } from "@/components/save-status-indicator";
 
-interface BudgetRow {
+export interface BudgetRow {
   budgeted: string;
   actual: string;
 }
@@ -12,7 +12,7 @@ interface BudgetSection {
   key: string;
   categories: string[];
 }
-type BudgetData = Record<string, BudgetRow>; // key: "sectionKey:category"
+export type BudgetData = Record<string, BudgetRow>; // key: "sectionKey:category"
 
 const INCOME_SECTION: BudgetSection = { title: "Income", key: "income", categories: ["Primary income", "Side income", "Other"] };
 const FIXED_SECTION: BudgetSection = { title: "Fixed Costs", key: "fixed", categories: ["Rent/Mortgage", "Utilities", "Insurance", "Loan payments"] };

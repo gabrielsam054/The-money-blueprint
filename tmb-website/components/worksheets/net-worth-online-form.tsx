@@ -3,13 +3,13 @@
 import { useWorksheetAutosave } from "@/lib/use-worksheet-autosave";
 import { SaveStatusIndicator } from "@/components/save-status-indicator";
 
-interface MonthRow {
+export interface MonthRow {
   cash: string;
   investments: string;
   other: string;
   debts: string;
 }
-type NetWorthData = Record<string, MonthRow>; // key: "1".."12"
+export type NetWorthData = Record<string, MonthRow>; // key: "1".."12"
 
 const EMPTY_ROW: MonthRow = { cash: "", investments: "", other: "", debts: "" };
 

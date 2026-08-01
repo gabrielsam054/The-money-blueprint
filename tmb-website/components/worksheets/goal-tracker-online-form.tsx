@@ -4,14 +4,14 @@ import { Plus, Trash2 } from "lucide-react";
 import { useWorksheetAutosave } from "@/lib/use-worksheet-autosave";
 import { SaveStatusIndicator } from "@/components/save-status-indicator";
 
-interface GoalRow {
+export interface GoalRow {
   goal: string;
   number: string;
   deadline: string;
   nextAction: string;
   status: string;
 }
-type GoalTrackerData = {
+export type GoalTrackerData = {
   rows: GoalRow[];
 } & Record<string, unknown>;
 
