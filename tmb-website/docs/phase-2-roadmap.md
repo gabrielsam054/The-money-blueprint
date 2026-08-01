@@ -191,3 +191,63 @@ link now disappear from the nav (`components/nav.tsx`,
 those are pre-purchase decision-making pages, not useful once someone
 already owns the book.
 
+## 12. Real Reviews — ✅ Built (replaced the fabricated testimonials)
+
+The homepage testimonials were placeholder text I wrote, never real
+reader quotes — flagged earlier as a real honesty problem regardless of
+the book's own quality. Now:
+
+1. `docs/database-schema-reviews.sql` — the `reviews` table. RLS is the
+   actual security boundary here, not just app logic: a user can insert
+   or edit their own review only while it's `'pending'`, and the check
+   applies to the row's state *after* the write too — so there's no way
+   for someone to set their own review to `'approved'` by calling the
+   update endpoint directly, only by you changing it yourself in the
+   Supabase table editor
+2. `/dashboard/review` — purchasers submit a star rating + text, one per
+   account (editable while still pending)
+3. `components/home/testimonials.tsx` — now queries real approved
+   reviews. If there are zero approved reviews, the whole section
+   renders nothing rather than showing an empty or fake state — it
+   appears on its own the first time you approve one
+
+**Setup**: run `docs/database-schema-reviews.sql`. **Approving a
+review**: Supabase → Table Editor → `reviews` → change a row's `status`
+from `pending` to `approved`. No admin UI was built for this — direct
+table editing was the pragmatic choice over building a full admin
+auth/role system for a single-owner site.
+
+## 13. Membership — ✅ Built (billing infrastructure only, no perk yet)
+
+Recurring monthly billing via Paystack subscriptions — deliberately not
+tied to any specific feature yet, per your instruction to build the
+infrastructure and decide the perk later.
+
+1. `docs/database-schema-membership.sql` — the `subscriptions` table
+2. `lib/paystack.ts` — `MEMBERSHIP_PRICE_GHS` (placeholder, GHS 50/month,
+   change freely) and an extended `initializeTransaction()` that accepts
+   an optional Paystack plan code
+3. `/api/membership/subscribe` — starts a subscription checkout
+4. `/api/webhooks/paystack` — extended to handle `subscription.create`,
+   `subscription.disable`, and `invoice.payment_failed`, in addition to
+   the existing one-time `charge.success` handling for the book
+5. `/dashboard/membership` — shows active/past-due/cancelled status, or
+   a subscribe prompt
+
+**One honest caveat**: `subscription.create`'s webhook payload isn't as
+consistently documented as `charge.success`'s — I'm not fully certain
+Paystack propagates custom `metadata` (which is how the other webhook
+handlers identify which user an event belongs to) onto that specific
+event type. I added a fallback that looks the user up by email via the
+subscription's customer object if metadata is absent, but this is worth
+testing directly with a real subscription rather than assuming it works.
+
+**Setup**:
+1. Run `docs/database-schema-membership.sql`
+2. Paystack dashboard → **Products** → **Plans** → create one (name,
+   amount, interval = monthly) → copy its **plan code**
+3. Add it to Vercel as `PAYSTACK_MEMBERSHIP_PLAN_CODE`
+4. Redeploy, then test a real subscription signup at
+   `/dashboard/membership` the same way we tested the book purchase —
+   Paystack's test-mode card works here too
+

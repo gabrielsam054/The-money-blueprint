@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "@/components/checkout-button";
-import { BOOK_PRICE_GHS } from "@/lib/paystack";
+import { BOOK_PRICE_GHS, MEMBERSHIP_PRICE_GHS } from "@/lib/paystack";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -19,10 +20,6 @@ const included = [
 ];
 
 const future = [
-  {
-    name: "Membership",
-    desc: "Monthly live Q&As and an ongoing community of readers building alongside you.",
-  },
   {
     name: "Courses",
     desc: "Deep-dive video courses on the highest-leverage parts of the book.",
@@ -67,6 +64,24 @@ export default function PricingPage() {
             <div className="mt-8">
               <CheckoutButton />
             </div>
+          </div>
+        </div>
+
+        <div className="mx-auto mt-8 max-w-md">
+          <div className="card !p-6 text-center">
+            <Badge>Available Now</Badge>
+            <h2 className="mt-3 font-heading text-lg font-semibold text-slate-ink">
+              Membership
+            </h2>
+            <p className="mt-1 text-sm text-slate-muted">
+              GHS {MEMBERSHIP_PRICE_GHS}/month
+            </p>
+            <Link
+              href="/dashboard/membership"
+              className="btn-secondary mt-4 inline-flex"
+            >
+              View Membership
+            </Link>
           </div>
         </div>
 

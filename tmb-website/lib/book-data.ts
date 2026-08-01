@@ -1,4 +1,4 @@
-import type { Part, Stat, Testimonial, FaqItem, WorkbookTool } from "@/types/book";
+import type { Part, Stat, FaqItem, WorkbookTool } from "@/types/book";
 
 export const bookMeta = {
   title: "The Modern Money Blueprint",
@@ -169,27 +169,6 @@ export const workbookTools: WorkbookTool[] = [
   { number: 10, title: "Marketing Checklist", tiedTo: "Part VI" },
   { number: 11, title: "Investment Checklist", tiedTo: "Part IX" },
   { number: 12, title: "Wealth-Building Milestone Checklist", tiedTo: "Part X" },
-];
-
-export const testimonials: Testimonial[] = [
-  {
-    quote:
-      "Most business books give you motivation. This one gives you a Monday-morning checklist. I finally know what to do first.",
-    name: "Early Reader",
-    role: "Freelance Consultant",
-  },
-  {
-    quote:
-      "The business idea library alone is worth it — 520 ideas with real cost and time-to-income numbers, not vague inspiration.",
-    name: "Early Reader",
-    role: "Side-Hustle Builder",
-  },
-  {
-    quote:
-      "I've read a dozen books that explain compound interest. This is the first one that connected it back to my actual debt payoff plan.",
-    name: "Early Reader",
-    role: "Personal Finance Reader",
-  },
 ];
 
 export const faqItems: FaqItem[] = [

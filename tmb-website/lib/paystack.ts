@@ -8,6 +8,12 @@ export const BOOK_PRICE_GHS = 340; // GHS 340 — adjust here to change the pric
 export const BOOK_PRICE_PESEWAS = BOOK_PRICE_GHS * 100;
 export const CURRENCY = "GHS";
 
+// Membership — recurring billing infrastructure only; no perk decided
+// yet, so nothing in the app currently checks subscription status to
+// gate anything. GHS 50/month is a placeholder, adjust freely.
+export const MEMBERSHIP_PRICE_GHS = 50;
+export const MEMBERSHIP_PRICE_PESEWAS = MEMBERSHIP_PRICE_GHS * 100;
+
 const PAYSTACK_BASE_URL = "https://api.paystack.co";
 
 function getSecretKey(): string {
@@ -38,6 +44,10 @@ export async function initializeTransaction(params: {
   reference: string;
   callbackUrl: string;
   metadata?: Record<string, unknown>;
+  /** When provided, Paystack automatically creates a recurring
+   * subscription tied to this plan after the first successful charge —
+   * used for membership signup, omitted for the one-time book purchase. */
+  planCode?: string;
 }): Promise<InitializeResponse["data"]> {
   const res = await fetch(`${PAYSTACK_BASE_URL}/transaction/initialize`, {
     method: "POST",
@@ -52,6 +62,7 @@ export async function initializeTransaction(params: {
       reference: params.reference,
       callback_url: params.callbackUrl,
       metadata: params.metadata,
+      ...(params.planCode ? { plan: params.planCode } : {}),
     }),
   });
 
