@@ -8,11 +8,21 @@ export const BOOK_PRICE_GHS = 340; // GHS 340 — adjust here to change the pric
 export const BOOK_PRICE_PESEWAS = BOOK_PRICE_GHS * 100;
 export const CURRENCY = "GHS";
 
+// Display-only. The site shows this price; Paystack actually charges
+// BOOK_PRICE_GHS above (that's what the connected Paystack account is
+// set up to settle in). These two numbers are set independently — this
+// isn't a live currency conversion, so if GHS 340 is changed, check
+// whether this should move too rather than assuming it updates itself.
+export const BOOK_PRICE_USD_DISPLAY = 29;
+
 // Membership — recurring billing infrastructure only; no perk decided
 // yet, so nothing in the app currently checks subscription status to
 // gate anything. GHS 50/month is a placeholder, adjust freely.
 export const MEMBERSHIP_PRICE_GHS = 50;
 export const MEMBERSHIP_PRICE_PESEWAS = MEMBERSHIP_PRICE_GHS * 100;
+
+// Same display-only relationship as the book price above.
+export const MEMBERSHIP_PRICE_USD_DISPLAY = 5;
 
 const PAYSTACK_BASE_URL = "https://api.paystack.co";
 

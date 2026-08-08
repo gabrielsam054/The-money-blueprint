@@ -1,6 +1,6 @@
 import { Check, Sparkles } from "lucide-react";
 import { CheckoutButton } from "@/components/checkout-button";
-import { BOOK_PRICE_GHS } from "@/lib/paystack";
+import { BOOK_PRICE_USD_DISPLAY } from "@/lib/paystack";
 
 const included = [
   "Full 259-page digital edition (PDF)",
@@ -27,7 +27,7 @@ export function InstantAccess() {
               The Modern Money Blueprint
             </h2>
             <p className="mt-5 font-heading text-4xl font-bold text-slate-ink">
-              GHS {BOOK_PRICE_GHS}
+              ${BOOK_PRICE_USD_DISPLAY}
             </p>
             <p className="mt-1 text-xs text-slate-muted">
               One-time payment. No subscription required for the book itself.

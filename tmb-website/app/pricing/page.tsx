@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CheckoutButton } from "@/components/checkout-button";
-import { BOOK_PRICE_GHS, MEMBERSHIP_PRICE_GHS } from "@/lib/paystack";
+import { BOOK_PRICE_USD_DISPLAY, MEMBERSHIP_PRICE_USD_DISPLAY } from "@/lib/paystack";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -51,7 +51,7 @@ export default function PricingPage() {
               Digital edition (PDF)
             </p>
             <p className="mt-6 font-heading text-4xl font-bold text-slate-ink">
-              GHS {BOOK_PRICE_GHS}
+              ${BOOK_PRICE_USD_DISPLAY}
             </p>
             <ul className="mt-6 space-y-3">
               {included.map((item) => (
@@ -74,7 +74,7 @@ export default function PricingPage() {
               Membership
             </h2>
             <p className="mt-1 text-sm text-slate-muted">
-              GHS {MEMBERSHIP_PRICE_GHS}/month
+              ${MEMBERSHIP_PRICE_USD_DISPLAY}/month
             </p>
             <Link
               href="/dashboard/membership"

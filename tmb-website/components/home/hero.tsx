@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { BOOK_PRICE_GHS } from "@/lib/paystack";
+import { BOOK_PRICE_USD_DISPLAY } from "@/lib/paystack";
 
 export function Hero() {
   return (
@@ -32,7 +32,7 @@ export function Hero() {
           </div>
 
           <p className="mt-6 text-sm text-slate-muted">
-            By <span className="font-semibold text-slate-ink">Gabriel Sam</span> — 259 pages, ready today. GHS {BOOK_PRICE_GHS}.
+            By <span className="font-semibold text-slate-ink">Gabriel Sam</span> — 259 pages, ready today. ${BOOK_PRICE_USD_DISPLAY}.
           </p>
         </div>
 

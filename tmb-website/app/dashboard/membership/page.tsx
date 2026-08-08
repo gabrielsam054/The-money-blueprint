@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/supabase/is-configured";
 import { SupabaseNotConfiguredNotice } from "@/components/supabase-not-configured-notice";
 import { MembershipSubscribeButton } from "@/components/membership-subscribe-button";
-import { MEMBERSHIP_PRICE_GHS } from "@/lib/paystack";
+import { MEMBERSHIP_PRICE_USD_DISPLAY } from "@/lib/paystack";
 
 export const metadata: Metadata = {
   title: "Membership",
@@ -95,7 +95,7 @@ export default async function MembershipPage() {
               Become a Member
             </p>
             <p className="mt-2 text-sm text-slate-muted">
-              GHS {MEMBERSHIP_PRICE_GHS}/month, billed automatically until you
+              ${MEMBERSHIP_PRICE_USD_DISPLAY}/month, billed automatically until you
               cancel.
             </p>
             <div className="mt-6">
